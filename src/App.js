@@ -1,28 +1,40 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Hello from Render!
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+function App() {
+  const [message, setMessage] = useState('');
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    axios.get('/')
+      .then(response => {
+        setMessage(response.data.message);
+      })
+      .catch(error => {
+        console.error('Error fetching message:', error);
+        setMessage('Error loading message');
+      });
+
+    axios.get('/items')
+      .then(response => {
+        setItems(response.data.items);
+      })
+      .catch(error => {
+        console.error('Error fetching items:', error);
+      });
+  }, []);
+
+  return (
+    <div className="App">
+      <h1>{message}</h1>
+      <h2>Items:</h2>
+      <ul>
+        {items.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default App;
