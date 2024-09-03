@@ -14,7 +14,7 @@ function Content() {
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
     console.log('API URL:', apiUrl);
 
-    fetch(`${apiUrl}/`)  // Remove /api/ from the root endpoint
+    fetch(`${apiUrl}`)  // Remove the trailing slash
       .then(response => {
         console.log('Message Response Status:', response.status);
         if (!response.ok) {
@@ -34,7 +34,7 @@ function Content() {
         setError(`Message Error: ${error.message}`);
       });
 
-    fetch(`${apiUrl}/items`)  // Remove /api/ from the items endpoint
+    fetch(`${apiUrl}/items`)
       .then(response => {
         console.log('Items Response Status:', response.status);
         if (!response.ok) {
