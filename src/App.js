@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import './App.css';
@@ -15,19 +14,19 @@ function Content() {
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
     console.log('API URL:', apiUrl);
 
-    const axiosInstance = axios.create({
-      baseURL: apiUrl,
-      timeout: 5000,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    });
-
-    axiosInstance.get('/')
+    fetch(`${apiUrl}/`)
       .then(response => {
-        console.log('Message response:', response.data);
-        setMessage(response.data.message);
+        console.log('Message Response Status:', response.status);
+        if (!response.ok) {
+          return response.text().then(text => {
+            throw new Error(`HTTP status ${response.status}: ${text}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Message response:', data);
+        setMessage(data.message);
       })
       .catch(error => {
         console.error('Error fetching message:', error);
@@ -35,10 +34,19 @@ function Content() {
         setError(`Message Error: ${error.message}`);
       });
 
-    axiosInstance.get('/items')
+    fetch(`${apiUrl}/items`)
       .then(response => {
-        console.log('Items response:', response.data);
-        setItems(response.data.items);
+        console.log('Items Response Status:', response.status);
+        if (!response.ok) {
+          return response.text().then(text => {
+            throw new Error(`HTTP status ${response.status}: ${text}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Items response:', data);
+        setItems(data.items);
       })
       .catch(error => {
         console.error('Error fetching items:', error);
